@@ -16,7 +16,11 @@ Use the built-in skill installer with:
 
 ### GitHub CLI
 
-    gh skill install SoulSniper-V2/usage-aware-delegation usage-aware-delegation
+    gh skill install SoulSniper-V2/usage-aware-delegation usage-aware-delegation --agent codex --scope user
+
+Use a GitHub CLI version with `gh skill install` (currently a preview command).
+For a single repository, run it there with `--scope project`. See the
+[GitHub CLI install options](https://cli.github.com/manual/gh_skill_install).
 
 ### Skills CLI
 
@@ -28,10 +32,13 @@ repository.
 ### Manual
 
     git clone https://github.com/SoulSniper-V2/usage-aware-delegation.git
-    mkdir -p ~/.codex/skills
-    cp -R usage-aware-delegation/skills/usage-aware-delegation ~/.codex/skills/usage-aware-delegation
+    mkdir -p ~/.agents/skills
+    cp -R usage-aware-delegation/skills/usage-aware-delegation ~/.agents/skills/usage-aware-delegation
 
-Start a new Codex turn after installation so the skill catalog refreshes.
+For a repository-only manual install, use `.agents/skills` in that repository.
+Copy into a new destination; check an existing installation before replacing it.
+Codex detects skill changes automatically. Restart Codex if the skill does not
+appear. See [Codex skill locations](https://learn.chatgpt.com/docs/build-skills#where-to-save-skills).
 
 ## Use it
 
@@ -134,7 +141,10 @@ and external permissions. When it cannot provide evidence, the skill says so.
     │       ├── model-routing.md
     │       ├── task-routing.md
     │       └── usage-and-agents.md
-    ├── tests/test_skill_contract.py
+    ├── tests/
+    │   ├── test_skill_contract.py
+    │   └── test_validator.py
+    ├── requirements-dev.txt
     ├── .github/workflows/validate.yml
     ├── CHANGELOG.md
     ├── CONTRIBUTING.md
@@ -145,13 +155,22 @@ is for people; it is not duplicated inside the skill directory.
 
 ## Validate
 
-The repository contract test uses only the Python standard library:
+The installed skill has no runtime dependencies. Repository validation needs
+Python 3.11 or newer and the pinned development dependencies:
 
-    python3 tests/test_skill_contract.py
+    python3 -m venv .venv
+    .venv/bin/python -m pip install -r requirements-dev.txt
+    .venv/bin/python tests/test_skill_contract.py
+    .venv/bin/python -m unittest discover -s tests -v
+
+On Windows, use `.venv\Scripts\python.exe` in place of `.venv/bin/python`.
+The checks parse YAML metadata, validate the invocation policy and local
+Markdown file links, and exercise malformed-package regressions. They do not
+measure an agent's routing decisions or validate remote links.
 
 If the Codex skill creator is installed:
 
-    python3 /path/to/codex/skills/.system/skill-creator/scripts/quick_validate.py skills/usage-aware-delegation
+    .venv/bin/python /path/to/codex/skills/.system/skill-creator/scripts/quick_validate.py skills/usage-aware-delegation
 
 Also check the patch:
 

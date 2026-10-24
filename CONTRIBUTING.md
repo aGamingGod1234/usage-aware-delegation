@@ -26,14 +26,23 @@ Every routing rule should answer:
 
 ## Validation
 
-Run these commands from the repository root:
+Use Python 3.11 or newer. Run these commands from the repository root:
 
-    python3 tests/test_skill_contract.py
+    python3 -m venv .venv
+    .venv/bin/python -m pip install -r requirements-dev.txt
+    .venv/bin/python tests/test_skill_contract.py
+    .venv/bin/python -m unittest discover -s tests -v
     git diff --check
+
+On Windows, use `.venv\Scripts\python.exe` for the virtual environment.
+CI exercises Python 3.11 and 3.15. The installed skill remains dependency-free;
+PyYAML and markdown-it-py are only used to validate repository metadata and links. Regression tests run the
+actual checker against temporary copies, including invalid YAML and missing
+references. Policy quality still requires review or a bounded routing exercise.
 
 If you have a Codex installation, run the skill creator validator too:
 
-    python3 /path/to/codex/skills/.system/skill-creator/scripts/quick_validate.py skills/usage-aware-delegation
+    .venv/bin/python /path/to/codex/skills/.system/skill-creator/scripts/quick_validate.py skills/usage-aware-delegation
 
 For changes to references or routing behavior, include a short note in the pull request describing the evidence and the expected behavior change.
 

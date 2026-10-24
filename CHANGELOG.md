@@ -2,6 +2,15 @@
 
 All notable changes to this skill are documented here.
 
+## Unreleased
+
+- Corrected Codex installation paths and made GitHub CLI agent and scope explicit.
+- Parse skill and agent YAML during validation, reject duplicate keys and invalid
+  field types, and check local file links throughout the package.
+- Added regression tests for malformed packages and pinned validation-only
+  YAML and Markdown parsers while preserving the existing policy-content checks.
+- Updated CI actions and test Python 3.11 and 3.15 explicitly.
+
 ## 0.2.1 - 2026-09-09
 
 - Rewrote the README around installation, task routing, usage, and
